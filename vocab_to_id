@@ -1,0 +1,35 @@
+import codecs
+
+
+RAW_DATA = 'simple-examples\data\ptb.valid.txt'
+VOCAB = 'ptb.vocab'
+OUTPUT_DATA = 'ptb.valid'
+
+
+with codecs.open(VOCAB,'r','utf-8') as f:
+
+    vocab = [w.strip() for w in f.readlines()]
+
+#生成一个单词到id映射的字典
+word_to_id = {k:v for (k,v) in zip(vocab,range(len(vocab)))}
+
+
+#返回某个单词的id
+def get_id(word):
+
+    return word_to_id[word] if word in word_to_id else word_to_id['<unk>']
+
+
+fin = codecs.open(RAW_DATA,'r','utf-8')
+fout = codecs.open(OUTPUT_DATA,'w','utf-8')
+
+#将训练样本中的单词替换成id的形式保存至文件
+for line in fin:
+
+    #每行末尾加结束符
+    word = line.strip().split() + ['<eos>']
+    out_line =' '.join([str(get_id(w)) for w in word]) + '\n'
+    fout.write(out_line)
+
+fin.close()
+fout.close()
